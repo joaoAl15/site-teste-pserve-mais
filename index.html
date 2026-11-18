@@ -1,0 +1,1207 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pousada Serve Mais</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Pousada Serve Mais: pousada inteira na beira do lago da UHE São Salvador, a 40 km de Palmeirópolis-TO. Pesca esportiva, flutuante, quartos, comida caseira e eventos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: lago escuro em WebGL com logo e nome em 3D no topo; seções alternando água (escuro), barro claro e sol (laranja). */
+:root{
+  --lago:#0B2420;
+  --lago-2:#123630;
+  --musgo:#E9EEE7;
+  --musgo-2:#DCE3D9;
+  --tinta:#0E1A17;
+  --madeira:#6B4127;
+  --sol:#E7A040;
+  --cinza:#7E8A85;
+  --linha:rgba(14,26,23,.14);
+  --linha-esc:rgba(233,238,231,.16);
+  --f-display:"Bricolage Grotesque","Arial Black",system-ui,sans-serif;
+  --f-serif:"Instrument Serif",Georgia,"Times New Roman",serif;
+  --f-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --gx:max(16px,env(safe-area-inset-left,0px));
+  --gxr:max(16px,env(safe-area-inset-right,0px));
+  --ease:cubic-bezier(.16,1,.3,1);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--lago);color:var(--musgo);font:400 16px/1.6 var(--f-body);overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit}
+button{font:inherit}
+:focus-visible{outline:2px solid var(--sol);outline-offset:3px;border-radius:4px}
+.wrap{padding-left:calc(var(--gx) + 2vw);padding-right:calc(var(--gxr) + 2vw);max-width:1480px;margin:0 auto}
+.mono{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.serif{font-family:var(--f-serif);font-style:italic;font-weight:400;letter-spacing:0}
+.claro-sec{background:var(--musgo);color:var(--tinta)}
+.eyebrow{display:flex;align-items:center;gap:14px;color:var(--cinza);margin-bottom:28px}
+.eyebrow::before{content:"";width:40px;height:1px;background:currentColor}
+.statement{font:600 clamp(34px,5.6vw,92px)/.98 var(--f-display);letter-spacing:-.045em;margin:0;max-width:15ch;text-wrap:balance}
+.statement .serif{color:var(--madeira)}
+.sec-head{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:clamp(40px,5vw,72px)}
+.sec-head h2{font:600 clamp(40px,7vw,120px)/.9 var(--f-display);letter-spacing:-.055em;margin:0}
+.sec-head p{max-width:36ch;margin:0}
+.demo-tag{display:inline-block;font:500 10px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:4px;background:rgba(231,160,64,.16);color:var(--sol);vertical-align:middle}
+.claro-sec .demo-tag{background:rgba(107,65,39,.1);color:var(--madeira)}
+
+/* loader */
+#loader{position:fixed;inset:0;z-index:100;background:var(--lago);display:flex;align-items:flex-end;justify-content:space-between;padding:0 var(--gxr) calc(24px + env(safe-area-inset-bottom,0px)) var(--gx);transition:transform 1s var(--ease)}
+#loader.out{transform:translateY(-100%)}
+#loader .n{font:800 clamp(80px,22vw,300px)/.8 var(--f-display);letter-spacing:-.05em;font-variant-numeric:tabular-nums}
+#loader .mono{color:var(--cinza);padding-bottom:12px}
+
+/* nav */
+nav.top{position:fixed;top:0;left:0;right:0;z-index:50;padding:calc(14px + env(safe-area-inset-top,0px)) var(--gxr) 14px var(--gx);display:flex;align-items:center;justify-content:space-between;gap:16px;transition:background .4s}
+nav.top.solid{background:rgba(11,36,32,.86);backdrop-filter:blur(10px)}
+.brand{position:relative;display:flex;align-items:center;gap:10px;text-decoration:none;font:600 15px var(--f-display);letter-spacing:-.01em;perspective:300px}
+.brand .gorro{position:absolute;left:-9px;top:-15px;width:34px;height:28px;transform:rotate(-24deg);pointer-events:none;z-index:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
+.brand img{width:38px;height:38px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 2px var(--madeira),0 4px 0 1px #3d2414;animation:coin 6s var(--ease) infinite}
+@keyframes coin{0%,70%{transform:rotateY(0)}85%,100%{transform:rotateY(360deg)}}
+nav.top ul{display:flex;gap:24px;list-style:none;margin:0;padding:0}
+nav.top ul a{text-decoration:none;font-size:14px;color:rgba(233,238,231,.75);transition:color .2s}
+nav.top ul a:hover{color:var(--musgo)}
+.pill{display:inline-flex;align-items:center;gap:12px;padding:8px 8px 8px 20px;border-radius:999px;text-decoration:none;font:600 14px var(--f-body);border:0;cursor:pointer;transition:transform .5s var(--ease),background .3s;white-space:nowrap}
+.pill .ic{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;transition:transform .5s var(--ease);flex:none}
+.pill:hover .ic{transform:rotate(-45deg)}
+.pill.claro{background:var(--musgo);color:var(--tinta)}
+.pill.claro .ic{background:var(--tinta);color:var(--musgo)}
+.pill.sol{background:var(--sol);color:var(--tinta)}
+.pill.sol .ic{background:var(--tinta);color:var(--sol)}
+.pill.escuro{background:var(--tinta);color:var(--musgo)}
+.pill.escuro .ic{background:var(--sol);color:var(--tinta)}
+.pill svg{width:16px;height:16px}
+
+/* hero */
+.hero{position:relative;min-height:min(100svh,1000px);overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;padding-top:calc(96px + env(safe-area-inset-top,0px))}
+#lago,#tres{position:absolute;inset:0;width:100%;height:100%;display:block}
+#tres{pointer-events:none}
+.hero-fallback{position:absolute;inset:0;background:url(assets/hero.jpg) center/cover;opacity:0}
+.hero .meta{position:relative;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;color:rgba(233,238,231,.7)}
+.hero .meta b{color:var(--musgo);font-weight:500}
+.hero .lead{position:relative;max-width:560px;margin-top:5vh}
+.hero h1{font:600 clamp(30px,4.2vw,58px)/1.02 var(--f-display);letter-spacing:-.035em;margin:0 0 28px;text-wrap:balance}
+.hero h1 .serif{font-size:1.08em;color:var(--sol)}
+.hero .giant{position:relative;font:800 clamp(90px,21.5vw,360px)/.78 var(--f-display);letter-spacing:-.065em;white-space:nowrap;margin:0 0 -.09em -.04em;color:var(--musgo);pointer-events:none;user-select:none}
+.hero.has3d .giant{visibility:hidden}
+.hero .scroll{position:absolute;right:var(--gxr);top:50%;writing-mode:vertical-rl;color:rgba(233,238,231,.6)}
+.line-mask{display:block;overflow:hidden}
+.line-mask>span{display:inline-block}
+
+/* marquee */
+.marquee{background:var(--sol);color:var(--tinta);overflow:hidden;padding:18px 0}
+.marquee .trk{display:flex;gap:48px;white-space:nowrap;width:max-content;animation:mq 38s linear infinite}
+.marquee span{font:600 clamp(20px,2.4vw,34px)/1 var(--f-display);letter-spacing:-.03em;display:inline-flex;align-items:center;gap:48px}
+.marquee span::after{content:"";width:12px;height:12px;border-radius:50%;background:var(--tinta);display:inline-block}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* férias */
+.ferias{position:relative;overflow:hidden;background:var(--tinta);color:var(--musgo)}
+.ferias-in{display:grid;grid-template-columns:1.2fr 1fr;gap:clamp(24px,5vw,80px);padding-block:clamp(70px,9vw,140px);align-items:center;position:relative}
+.ferias-in>*{min-width:0}
+.ferias .bg{position:absolute;inset:0;background:url(assets/demo/barco.jpg) center/cover;opacity:.35}
+.ferias .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--tinta) 15%,rgba(14,26,23,.55) 60%,rgba(14,26,23,.2))}
+.ferias h2{font:800 clamp(52px,9vw,150px)/.85 var(--f-display);letter-spacing:-.06em;margin:14px 0 22px}
+.ferias h2 .serif{font-weight:400;color:var(--sol);letter-spacing:-.02em}
+.ferias p{max-width:42ch;color:rgba(233,238,231,.78);margin:0 0 28px;font-size:17px}
+.selo{display:inline-flex;align-items:center;gap:10px;background:var(--sol);color:var(--tinta);padding:6px 12px;border-radius:999px;font:600 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase}
+.selo::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--tinta);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.25}}
+.contagem{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--linha-esc);border:1px solid var(--linha-esc);border-radius:10px;overflow:hidden}
+.contagem div{background:rgba(14,26,23,.82);padding:22px 14px;text-align:center;backdrop-filter:blur(6px)}
+.contagem b{display:block;font:800 clamp(38px,5vw,68px)/1 var(--f-display);letter-spacing:-.05em;font-variant-numeric:tabular-nums}
+.contagem span{color:var(--cinza)}
+.ferias-lista{list-style:none;margin:22px 0 0;padding:0;display:grid;gap:10px}
+.ferias-lista li{display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid var(--linha-esc);padding-bottom:10px;font-size:15px}
+.ferias-lista li b{font:600 15px var(--f-display);color:var(--sol);white-space:nowrap}
+
+/* lugar */
+.lugar{padding-block:clamp(80px,12vw,180px)}
+.lugar-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(24px,5vw,80px);margin-top:clamp(48px,7vw,110px);align-items:start}
+.lugar-grid>*{min-width:0}
+.fotos{display:grid;grid-template-columns:1fr .7fr;gap:16px;align-items:end}
+.fotos figure{margin:0;overflow:hidden;border-radius:6px;position:relative}
+.fotos figure img{width:100%;height:100%;object-fit:cover;transform:scale(1.15)}
+.fotos .f1{aspect-ratio:4/5}
+.fotos .f2{aspect-ratio:3/5;margin-bottom:-60px}
+.fotos figcaption{position:absolute;left:12px;bottom:10px;color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.texto p{font-size:18px;line-height:1.6;max-width:44ch;margin:0 0 20px;color:#2a3632}
+.ficha{margin:40px 0 0;border-top:1px solid var(--linha)}
+.ficha div{display:grid;grid-template-columns:140px 1fr;gap:16px;padding:16px 0;border-bottom:1px solid var(--linha);align-items:baseline}
+.ficha dt{color:var(--cinza)}
+.ficha dd{margin:0;font:500 17px/1.35 var(--f-display);letter-spacing:-.01em}
+
+/* quartos */
+.quartos{padding-block:0 clamp(80px,10vw,150px)}
+.quartos .sec-head p{color:#3b4844}
+.q-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(20px,2.4vw,36px)}
+.quarto{display:grid;grid-template-columns:1fr 1fr;background:#fff;border-radius:10px;overflow:hidden;min-width:0;box-shadow:0 1px 0 var(--linha)}
+.quarto .ph{position:relative;min-height:300px;overflow:hidden}
+.quarto .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
+.quarto:hover .ph img{transform:scale(1.06)}
+.quarto .ph .cap{position:absolute;left:12px;top:12px;background:rgba(14,26,23,.75);color:var(--musgo);padding:6px 10px;border-radius:999px;font:600 13px var(--f-display)}
+.quarto .info{padding:24px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.quarto h3{font:600 26px/1.05 var(--f-display);letter-spacing:-.03em;margin:0}
+.quarto p{margin:0;color:#46524e;font-size:15px}
+.specs{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin:auto 0 0;padding-top:14px;border-top:1px solid var(--linha)}
+.specs dt{color:var(--cinza);font:500 10px var(--f-mono);letter-spacing:.08em;text-transform:uppercase}
+.specs dd{margin:2px 0 0;font:600 15px var(--f-display)}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tags span{font-size:12px;padding:4px 10px;border-radius:999px;background:var(--musgo);color:#34413c}
+.q-total{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center;margin-top:28px;padding:20px 24px;border:1px dashed rgba(14,26,23,.3);border-radius:10px}
+.q-total b{font:800 34px/1 var(--f-display);letter-spacing:-.04em;color:var(--madeira)}
+
+/* experiências */
+.exp{position:relative;padding-block:clamp(80px,10vw,140px) 0;overflow:hidden}
+.exp .sec-head h2 .serif{color:var(--sol)}
+.exp .sec-head p{color:rgba(233,238,231,.7)}
+.rail{display:flex;gap:clamp(16px,2vw,32px);padding-left:calc(var(--gx) + 2vw);padding-right:calc(var(--gxr) + 2vw);padding-bottom:clamp(80px,10vw,140px);width:max-content}
+.card{position:relative;width:clamp(280px,30vw,440px);flex:none}
+.card .ph{aspect-ratio:3/4;overflow:hidden;border-radius:6px;background:var(--lago-2)}
+.card .ph img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
+.card:hover .ph img{transform:scale(1.06)}
+.card .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:18px;border-top:1px solid var(--linha-esc);padding-top:14px}
+.card h3{font:600 clamp(22px,2vw,30px)/1.1 var(--f-display);letter-spacing:-.03em;margin:0}
+.card .mono{color:var(--cinza)}
+.card p{margin:8px 0 0;color:rgba(233,238,231,.68);font-size:15px;max-width:36ch}
+.exp-bg{position:absolute;right:-.05em;top:40px;font:800 clamp(160px,30vw,520px)/.8 var(--f-display);letter-spacing:-.07em;color:rgba(233,238,231,.035);pointer-events:none;user-select:none}
+
+/* comida */
+.comida{padding-block:clamp(80px,11vw,170px)}
+.comida .sec-head h2 .serif{color:var(--madeira)}
+.comida .sec-head p{color:#3b4844}
+.c-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,64px);align-items:start}
+.c-grid>*{min-width:0}
+.c-foto{position:sticky;top:96px;aspect-ratio:4/5;border-radius:10px;overflow:hidden;background:var(--musgo-2)}
+.c-foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.06);transition:opacity .7s var(--ease),transform 1.2s var(--ease)}
+.c-foto img.on{opacity:1;transform:scale(1)}
+.c-foto .hora{position:absolute;right:14px;bottom:14px;background:var(--sol);color:var(--tinta);padding:8px 12px;border-radius:999px;font:600 13px var(--f-display)}
+.pratos{list-style:none;margin:0;padding:0;border-top:1px solid var(--linha)}
+.prato{display:grid;grid-template-columns:auto 1fr;gap:6px 20px;padding:26px 0;border-bottom:1px solid var(--linha);cursor:default}
+.prato .num{font:500 12px var(--f-mono);color:var(--cinza);padding-top:10px}
+.prato h3{font:600 clamp(26px,3vw,42px)/1 var(--f-display);letter-spacing:-.04em;margin:0;transition:color .3s,transform .5s var(--ease)}
+.prato:hover h3,.prato.on h3{color:var(--madeira);transform:translateX(6px)}
+.prato p{grid-column:2;margin:6px 0 0;color:#46524e;max-width:46ch}
+.prato .quando{grid-column:2;color:var(--cinza)}
+.prato .thumb{display:none}
+
+/* pacotes */
+.pacotes{padding-block:clamp(80px,11vw,170px);background:var(--lago-2)}
+.pacotes .sec-head h2 .serif{color:var(--sol)}
+.pacotes .sec-head p{color:rgba(233,238,231,.72)}
+.p-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,1.6vw,24px);align-items:stretch}
+.pac{position:relative;display:flex;flex-direction:column;gap:18px;padding:clamp(24px,2.4vw,36px);border-radius:12px;border:1px solid var(--linha-esc);background:rgba(11,36,32,.6);min-width:0;transition:transform .6s var(--ease),border-color .3s}
+.pac:hover{transform:translateY(-6px);border-color:rgba(231,160,64,.5)}
+.pac.destaque{background:var(--musgo);color:var(--tinta);border-color:var(--musgo)}
+.pac .rotulo{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.pac .rotulo .mono{color:var(--cinza)}
+.pac .badge{background:var(--sol);color:var(--tinta);font:600 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;border-radius:999px}
+.pac h3{font:600 34px/1 var(--f-display);letter-spacing:-.04em;margin:0}
+.pac .preco{display:flex;align-items:flex-start;gap:6px;font:800 clamp(54px,5.4vw,84px)/.85 var(--f-display);letter-spacing:-.06em;font-variant-numeric:tabular-nums}
+.pac .preco small{font:500 14px var(--f-mono);letter-spacing:0;margin-top:8px}
+.pac .por{color:var(--cinza);font-size:14px;margin-top:-8px}
+.pac ul{list-style:none;margin:0;padding:18px 0 0;border-top:1px solid var(--linha-esc);display:grid;gap:10px;font-size:15px}
+.pac.destaque ul{border-top-color:var(--linha)}
+.pac li{display:grid;grid-template-columns:18px 1fr;gap:10px;align-items:start}
+.pac li::before{content:"";width:14px;height:14px;margin-top:4px;border-radius:50%;border:1.5px solid var(--sol);background:radial-gradient(circle,var(--sol) 35%,transparent 40%)}
+.pac.destaque li::before{border-color:var(--madeira);background:radial-gradient(circle,var(--madeira) 35%,transparent 40%)}
+.pac li.off{opacity:.38}
+.pac li.off::before{background:none}
+.pac .pill{margin-top:auto;align-self:flex-start}
+.p-nota{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:28px;color:rgba(233,238,231,.65);font-size:14px}
+.p-nota b{color:var(--musgo);font-weight:600}
+
+/* reserva */
+.reserva-sec{padding-block:clamp(70px,9vw,140px)}
+.r-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:clamp(32px,6vw,100px);align-items:start}
+.r-grid>*{min-width:0}
+.r-grid .statement{font-size:clamp(34px,4.8vw,76px)}
+.r-grid .lado p{color:#3b4844;max-width:40ch;font-size:17px;margin:24px 0 0}
+.reserva{background:var(--tinta);color:var(--musgo);border-radius:12px;padding:clamp(24px,3vw,40px)}
+.reserva h3{font:600 30px/1.05 var(--f-display);letter-spacing:-.035em;margin:0 0 6px}
+.reserva > p{color:rgba(233,238,231,.65);margin:0 0 24px;font-size:15px}
+.campos{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.campo{display:flex;flex-direction:column;gap:6px;min-width:0}
+.campo.full{grid-column:1/-1}
+.campo label,.campo .lbl{color:var(--cinza)}
+.campo input,.campo select{font:500 16px var(--f-body);color:var(--musgo);background:transparent;border:0;border-bottom:1px solid var(--linha-esc);padding:10px 0;border-radius:0;width:100%;color-scheme:dark}
+.campo select option{background:var(--tinta)}
+.campo input:focus,.campo select:focus{outline:0;border-bottom-color:var(--sol)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chips input{position:absolute;opacity:0;pointer-events:none}
+.chips label{border:1px solid var(--linha-esc);border-radius:999px;padding:8px 14px;font-size:14px;cursor:pointer;color:var(--musgo);transition:background .2s,color .2s,border-color .2s}
+.chips input:checked+label{background:var(--sol);color:var(--tinta);border-color:var(--sol)}
+.chips input:focus-visible+label{outline:2px solid var(--sol);outline-offset:2px}
+.estimativa{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:24px;padding-top:18px;border-top:1px solid var(--linha-esc)}
+.estimativa strong{font:800 clamp(34px,3.6vw,48px)/1 var(--f-display);letter-spacing:-.05em;color:var(--sol);font-variant-numeric:tabular-nums}
+.reserva .pill{margin-top:22px}
+.reserva .msg{margin-top:14px;font-size:13px;color:var(--cinza)}
+
+/* eventos */
+.eventos{padding-block:clamp(80px,11vw,170px);position:relative;overflow:hidden}
+.eventos .sec-head h2 .serif{color:var(--sol)}
+.eventos .sec-head p{color:rgba(233,238,231,.72)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--linha-esc);margin-bottom:40px}
+.tab{background:none;border:0;color:rgba(233,238,231,.6);padding:14px 18px;cursor:pointer;font:600 15px var(--f-display);letter-spacing:-.01em;position:relative}
+.tab[aria-selected="true"]{color:var(--musgo)}
+.tab[aria-selected="true"]::after{content:"";position:absolute;left:12px;right:12px;bottom:-1px;height:2px;background:var(--sol)}
+.ev-lista{display:grid;gap:0;border-top:1px solid var(--linha-esc)}
+.ev{display:grid;grid-template-columns:120px 1fr 240px auto;gap:clamp(16px,3vw,40px);align-items:center;padding:26px 0;border-bottom:1px solid var(--linha-esc)}
+.ev>*{min-width:0}
+.ev .data{font:800 54px/.85 var(--f-display);letter-spacing:-.05em}
+.ev .data small{display:block;font:500 12px var(--f-mono);letter-spacing:.08em;color:var(--sol);margin-top:8px}
+.ev h3{font:600 clamp(22px,2.4vw,32px)/1.05 var(--f-display);letter-spacing:-.03em;margin:0 0 6px}
+.ev p{margin:0;color:rgba(233,238,231,.7);font-size:15px}
+.ev .img{aspect-ratio:16/10;border-radius:8px;overflow:hidden}
+.ev .img img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
+.ev:hover .img img{transform:scale(1.07)}
+.ev .vagas{text-align:right}
+.ev .vagas b{display:block;font:600 20px var(--f-display)}
+.ev .vagas span{color:var(--cinza)}
+.torneio{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,5vw,80px);align-items:start}
+.torneio>*{min-width:0}
+.torneio .foto{aspect-ratio:4/5;border-radius:10px;overflow:hidden;position:relative}
+.torneio .foto img{width:100%;height:100%;object-fit:cover}
+.torneio .foto .sticker{position:absolute;left:16px;top:16px;background:var(--sol);color:var(--tinta);border-radius:50%;width:110px;height:110px;display:grid;place-items:center;text-align:center;font:800 15px/1.05 var(--f-display);transform:rotate(-12deg)}
+.torneio h3{font:800 clamp(36px,4.4vw,64px)/.92 var(--f-display);letter-spacing:-.05em;margin:0 0 18px}
+.torneio > div > p{color:rgba(233,238,231,.75);max-width:46ch}
+.premios{width:100%;border-collapse:collapse;margin:24px 0;font-variant-numeric:tabular-nums}
+.premios th,.premios td{text-align:left;padding:12px 0;border-bottom:1px solid var(--linha-esc);font-size:15px}
+.premios th{font:500 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--cinza)}
+.premios td:last-child,.premios th:last-child{text-align:right}
+.premios td b{font:600 17px var(--f-display)}
+.regras{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px;margin:0 0 26px}
+.regras dt{color:var(--cinza);font:500 10px var(--f-mono);letter-spacing:.08em;text-transform:uppercase}
+.regras dd{margin:2px 0 0;font:500 15px var(--f-display)}
+.seu-evento{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(24px,5vw,80px);align-items:center}
+.seu-evento>*{min-width:0}
+.tipos{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tipo{border:1px solid var(--linha-esc);border-radius:10px;padding:20px}
+.tipo b{display:block;font:600 20px/1.1 var(--f-display);letter-spacing:-.02em;margin-bottom:6px}
+.tipo span{color:rgba(233,238,231,.65);font-size:14px}
+.seu-evento .foto{aspect-ratio:1;border-radius:10px;overflow:hidden}
+.seu-evento .foto img{width:100%;height:100%;object-fit:cover}
+.seu-evento h3{font:800 clamp(34px,4vw,58px)/.95 var(--f-display);letter-spacing:-.05em;margin:0 0 20px}
+.seu-evento p{color:rgba(233,238,231,.75);max-width:44ch}
+[role="tabpanel"]{animation:fade .6s var(--ease)}
+@keyframes fade{from{opacity:0;transform:translateY(12px)}}
+
+/* como chegar */
+.chegar{padding-block:clamp(80px,10vw,150px)}
+.rota{position:relative;margin-top:56px;padding:40px 0 10px}
+.rota svg{width:100%;height:auto;display:block;overflow:visible}
+.rota .pts{display:flex;justify-content:space-between;gap:16px;margin-top:20px}
+.rota .pts b{display:block;font:600 clamp(20px,2.4vw,34px)/1.1 var(--f-display);letter-spacing:-.03em}
+.rota .pts .mono{color:var(--cinza)}
+.rota .km{position:absolute;left:50%;top:0;transform:translateX(-50%);font:800 clamp(48px,7vw,110px)/1 var(--f-display);letter-spacing:-.06em;color:var(--sol);white-space:nowrap}
+.chegar-foot{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;margin-top:56px;padding-top:28px;border-top:1px solid var(--linha-esc)}
+.chegar-foot p{margin:0;max-width:52ch;color:rgba(233,238,231,.72)}
+
+/* final */
+.final{position:relative;overflow:hidden;padding-block:clamp(90px,12vw,190px) 40px;background:var(--sol);color:var(--tinta)}
+.final h2{font:800 clamp(64px,13vw,230px)/.82 var(--f-display);letter-spacing:-.07em;margin:0}
+.final h2 .serif{font-weight:400;letter-spacing:-.02em}
+.final-row{display:flex;justify-content:space-between;align-items:end;gap:32px;flex-wrap:wrap;margin-top:48px}
+.final-row p{max-width:38ch;margin:0;font-size:18px}
+.contato{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.fone{font:600 clamp(26px,3vw,40px)/1 var(--f-display);letter-spacing:-.03em;user-select:all}
+.contato .acoes{display:flex;gap:10px;flex-wrap:wrap}
+.copy{background:transparent;border:1px solid rgba(14,26,23,.35);color:var(--tinta);border-radius:999px;padding:10px 16px;font:500 14px var(--f-body);cursor:pointer}
+footer.base{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:110px;padding-top:20px;border-top:1px solid rgba(14,26,23,.2);color:rgba(14,26,23,.7)}
+footer.base a{text-decoration:none}
+
+.zap{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;width:58px;height:58px;border-radius:50%;background:#25D366;color:#0b2a14;display:grid;place-items:center;box-shadow:0 8px 30px rgba(0,0,0,.35);transition:transform .4s var(--ease)}
+.zap:hover{transform:scale(1.08)}
+.zap svg{width:28px;height:28px}
+.cur{position:fixed;left:0;top:0;width:10px;height:10px;border-radius:50%;background:var(--sol);pointer-events:none;z-index:200;mix-blend-mode:difference;transform:translate(-50%,-50%);transition:width .35s var(--ease),height .35s var(--ease)}
+.cur.big{width:56px;height:56px}
+@media (hover:none){.cur{display:none}}
+
+@media (max-width:1100px){
+  nav.top ul{gap:16px}
+  .q-grid{grid-template-columns:1fr}
+  .ev{grid-template-columns:100px 1fr auto}
+  .ev .img{display:none}
+}
+@media (max-width:960px){
+  nav.top ul{display:none}
+  .lugar-grid,.r-grid,.c-grid,.ferias-in,.torneio,.seu-evento{grid-template-columns:1fr}
+  .p-grid{grid-template-columns:1fr}
+  .fotos .f2{margin-bottom:0}
+  .rail{width:auto;flex-direction:column;padding-bottom:80px}
+  .card{width:100%}
+  .card .ph{aspect-ratio:4/5}
+  .hero .scroll{display:none}
+  .c-foto{display:none}
+  .prato{grid-template-columns:auto 1fr 96px}
+  .prato .thumb{display:block;grid-column:3;grid-row:1/4;width:96px;height:96px;border-radius:8px;object-fit:cover}
+  .torneio .foto{aspect-ratio:16/11}
+  .seu-evento .foto{aspect-ratio:16/10}
+}
+@media (max-width:600px){
+  .campos,.tipos,.regras{grid-template-columns:1fr}
+  .brand span{display:none}
+  .hero .meta span:nth-child(2){display:none}
+  .quarto{grid-template-columns:1fr}
+  .quarto .ph{min-height:220px}
+  .ev{grid-template-columns:76px 1fr;row-gap:10px}
+  .ev .data{font-size:40px}
+  .ev .vagas{grid-column:2;text-align:left}
+  .contagem div{padding:16px 6px}
+  .ficha div{grid-template-columns:100px 1fr}
+  .prato{grid-template-columns:auto 1fr 72px}
+  .prato .thumb{width:72px;height:72px}
+}
+@media (prefers-reduced-motion:reduce){
+  .marquee .trk,.brand img,.selo::before{animation:none}
+  #loader{display:none}
+  *{transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<div id="loader" aria-hidden="true"><div class="n" id="ldn">0</div><div class="mono">Serve Mais · enchendo o lago</div></div>
+<div class="cur" id="cur" aria-hidden="true"></div>
+
+<nav class="top" id="nav">
+  <a class="brand" href="#topo"><svg class="gorro" viewBox="0 0 34 28" aria-hidden="true"><path d="M4 21 C7 9 15 3 24 4 C28 5 30 9 29 14 C26 11 22 11 20 14 C24 15 28 18 30 21 Z" fill="#C41E2A"/><rect x="2" y="19" width="30" height="7" rx="3.5" fill="#F6F3EE"/><circle cx="29.5" cy="14.5" r="3.6" fill="#F6F3EE"/></svg><img src="assets/logo.jpg" alt="Logo da Pousada Serve Mais" width="38" height="38"><span>Pousada Serve Mais</span></a>
+  <ul>
+    <li><a href="#ferias">Férias</a></li>
+    <li><a href="#quartos">Quartos</a></li>
+    <li><a href="#comida">Comida</a></li>
+    <li><a href="#pacotes">Pacotes</a></li>
+    <li><a href="#eventos">Eventos</a></li>
+    <li><a href="#chegar">Como chegar</a></li>
+  </ul>
+  <a class="pill claro mag" href="#reservar">Reservar <span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12 12 4M5 4h7v7"/></svg></span></a>
+</nav>
+
+<header class="hero" id="topo">
+  <div class="hero-fallback" id="fallback"></div>
+  <canvas id="lago" aria-hidden="true"></canvas>
+  <canvas id="tres" aria-hidden="true"></canvas>
+  <div class="wrap" style="position:relative;width:100%">
+    <div class="meta mono">
+      <span><b>Palmeirópolis</b> · Tocantins</span>
+      <span>Lago da UHE São Salvador</span>
+      <span>Até 20 pessoas</span>
+    </div>
+    <div class="lead">
+      <h1><span class="line-mask"><span>Lago, peixe e sossego.</span></span><span class="line-mask"><span class="serif">O resto a gente serve.</span></span></h1>
+      <a class="pill sol mag" href="#pacotes">Ver pacotes a partir de R$ 500 <span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12 12 4M5 4h7v7"/></svg></span></a>
+    </div>
+  </div>
+  <div class="mono scroll">Role pra baixo ↓</div>
+  <div class="giant" aria-hidden="true">SERVE MAIS</div>
+</header>
+
+<div class="marquee" aria-label="O que tem na pousada">
+  <div class="trk">
+    <span>Pesca esportiva</span><span>Flutuante no lago</span><span>Comida caseira</span><span>Camping estruturado</span><span>Torneios de pesca</span><span>Descanso garantido</span>
+    <span>Pesca esportiva</span><span>Flutuante no lago</span><span>Comida caseira</span><span>Camping estruturado</span><span>Torneios de pesca</span><span>Descanso garantido</span>
+  </div>
+</div>
+
+<!-- FÉRIAS -->
+<section class="ferias" id="ferias">
+  <div class="bg px-bg" aria-hidden="true"></div>
+  <div class="wrap ferias-in">
+    <div>
+      <span class="selo">Temporada de férias 2026/27</span>
+      <h2>Férias no <span class="serif">lago.</span></h2>
+      <p>De 19 de dezembro a 1º de fevereiro a pousada abre em temporada. Reserve 5 diárias e pague 4, com o Réveillon no flutuante incluso pra quem estiver aqui na virada.</p>
+      <a class="pill sol mag" href="#reservar" data-pacote="Pacote Férias">Garantir minha data <span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12 12 4M5 4h7v7"/></svg></span></a>
+    </div>
+    <div>
+      <div class="mono" style="color:var(--cinza);margin-bottom:12px">A temporada começa em</div>
+      <div class="contagem" id="contagem" aria-live="off">
+        <div><b id="cd-d">00</b><span class="mono">dias</span></div>
+        <div><b id="cd-h">00</b><span class="mono">horas</span></div>
+        <div><b id="cd-m">00</b><span class="mono">min</span></div>
+        <div><b id="cd-s">00</b><span class="mono">seg</span></div>
+      </div>
+      <ul class="ferias-lista">
+        <li><span>5 diárias pelo preço de 4</span><b>-20%</b></li>
+        <li><span>Réveillon no flutuante com ceia</span><b>Incluso</b></li>
+        <li><span>Datas restantes em dezembro</span><b>3 fins de semana</b></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- O LUGAR -->
+<section class="claro-sec" id="lugar">
+  <div class="wrap lugar">
+    <div class="eyebrow mono">O lugar</div>
+    <h2 class="statement rv">A pousada inteira na beira do lago, <span class="serif">só pra sua turma.</span></h2>
+    <div class="lugar-grid">
+      <div class="fotos">
+        <figure class="f1"><img class="px" src="assets/casa.jpg" alt="Varanda da pousada com gramado e palmeiras" loading="lazy"><figcaption class="mono">A casa</figcaption></figure>
+        <figure class="f2"><img class="px" src="assets/flutuante.jpg" alt="Vista aérea do flutuante com barcos no lago" loading="lazy"><figcaption class="mono">O flutuante</figcaption></figure>
+      </div>
+      <div class="texto">
+        <p class="rv">A Serve Mais não divide você com estranhos. Quando a turma reserva, a pousada fica fechada pra ela: casa, gramado, flutuante e a margem do lago.</p>
+        <p class="rv">De manhã cedo é barco na água atrás do tucunaré. De tarde, sombra e rede. De noite, o flutuante acende e o lago vira espelho.</p>
+        <dl class="ficha">
+          <div><dt class="mono">Onde</dt><dd>Lago da Usina Hidrelétrica de São Salvador do Tocantins</dd></div>
+          <div><dt class="mono">Distância</dt><dd>40 km de Palmeirópolis-TO</dd></div>
+          <div><dt class="mono">Capacidade</dt><dd>Até 20 pessoas, entre quartos e redário</dd></div>
+          <div><dt class="mono">Formato</dt><dd>Pousada reservada, exclusiva pro seu grupo</dd></div>
+          <div><dt class="mono">Check-in</dt><dd>Sexta a partir das 14h · saída domingo às 16h</dd></div>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUARTOS -->
+<section class="claro-sec" id="quartos">
+  <div class="wrap quartos">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow mono">Quartos <span class="demo-tag">fotos ilustrativas</span></div>
+        <h2>Onde a turma <span class="serif" style="color:var(--madeira)">dorme</span></h2>
+      </div>
+      <p>Quatro ambientes que somam 20 lugares. Do casal que quer silêncio ao grupo de pescador que acorda às 4h.</p>
+    </div>
+    <div class="q-grid">
+      <article class="quarto">
+        <div class="ph"><img src="assets/demo/quarto-suite.jpg" alt="Suíte com cama de casal e roupa de cama branca" loading="lazy"><span class="cap">2 pessoas</span></div>
+        <div class="info">
+          <h3>Suíte Beira-Lago</h3>
+          <p>A janela abre direto pro lago. Ideal pro casal que vai e pra quem quer acordar com o sol nascendo na água.</p>
+          <div class="tags"><span>Ar-condicionado</span><span>Banheiro privativo</span><span>Varanda</span></div>
+          <dl class="specs"><div><dt>Camas</dt><dd>1 queen</dd></div><div><dt>Área</dt><dd>22 m²</dd></div></dl>
+        </div>
+      </article>
+      <article class="quarto">
+        <div class="ph"><img src="assets/demo/quarto-familia.jpg" alt="Quarto amplo com cama grande e lareira" loading="lazy"><span class="cap">até 5 pessoas</span></div>
+        <div class="info">
+          <h3>Quarto Família</h3>
+          <p>Cama de casal, duas de solteiro e uma bicama. Cabe a família inteira sem ninguém dormir no sofá.</p>
+          <div class="tags"><span>Ar-condicionado</span><span>Frigobar</span><span>Banheiro privativo</span></div>
+          <dl class="specs"><div><dt>Camas</dt><dd>1 casal + 3</dd></div><div><dt>Área</dt><dd>28 m²</dd></div></dl>
+        </div>
+      </article>
+      <article class="quarto">
+        <div class="ph"><img src="assets/demo/quarto-pesca.jpg" alt="Quarto com beliches de madeira e janela" loading="lazy"><span class="cap">até 8 pessoas</span></div>
+        <div class="info">
+          <h3>Alojamento do Pescador</h3>
+          <p>Quatro beliches, bancada pra montar a tralha e tomada pra carregar bateria de motor elétrico.</p>
+          <div class="tags"><span>Ar-condicionado</span><span>Armário pra varas</span><span>2 banheiros</span></div>
+          <dl class="specs"><div><dt>Camas</dt><dd>4 beliches</dd></div><div><dt>Área</dt><dd>30 m²</dd></div></dl>
+        </div>
+      </article>
+      <article class="quarto">
+        <div class="ph"><img src="assets/demo/quarto-rede.jpg" alt="Varanda de madeira com rede pendurada" loading="lazy"><span class="cap">até 5 redes</span></div>
+        <div class="info">
+          <h3>Varanda das Redes</h3>
+          <p>Redário coberto com vento do lago a noite toda. Tem quem prefira isso ao ar-condicionado.</p>
+          <div class="tags"><span>Ventilação natural</span><span>Mosquiteiro</span><span>Vista do lago</span></div>
+          <dl class="specs"><div><dt>Lugares</dt><dd>5 redes</dd></div><div><dt>Área</dt><dd>40 m²</dd></div></dl>
+        </div>
+      </article>
+    </div>
+    <div class="q-total">
+      <span class="mono" style="color:var(--cinza)">Somando tudo</span>
+      <span>2 + 5 + 8 + 5 = <b>20 pessoas</b></span>
+      <span style="color:#46524e">Roupa de cama e toalhas inclusas em todos os pacotes.</span>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIÊNCIAS -->
+<section class="exp" id="experiencias">
+  <div class="exp-bg" aria-hidden="true">Lago</div>
+  <div class="wrap sec-head">
+    <h2>O que fazer <span class="serif">por lá</span></h2>
+    <p>Quatro jeitos de passar o dia. Dá pra fazer todos no mesmo fim de semana.</p>
+  </div>
+  <div class="rail" id="rail">
+    <article class="card">
+      <div class="ph"><img src="assets/barcos.jpg" alt="Barcos de pesca atracados no flutuante, vistos de cima" loading="lazy"></div>
+      <div class="row"><h3>Pesca esportiva</h3><span class="mono">Manhã</span></div>
+      <p>Barco direto do flutuante pro lago. Saiu, pescou, voltou pro almoço.</p>
+    </article>
+    <article class="card">
+      <div class="ph"><img src="assets/deck.jpg" alt="Deck do flutuante com área coberta" loading="lazy"></div>
+      <div class="row"><h3>Flutuante</h3><span class="mono">Tarde</span></div>
+      <p>Uma casa em cima d'água, com sombra, deck e o lago inteiro em volta.</p>
+    </article>
+    <article class="card">
+      <div class="ph"><img src="assets/trilha.jpg" alt="Estrada de terra entre eucaliptos" loading="lazy"></div>
+      <div class="row"><h3>Camping estruturado</h3><span class="mono">Fim de semana</span></div>
+      <p>Barraca na sombra, estrutura por perto. Pra quem gosta do mato sem perrengue.</p>
+    </article>
+    <article class="card">
+      <div class="ph"><img src="assets/noite.jpg" alt="Flutuante iluminado refletindo no lago à noite" loading="lazy"></div>
+      <div class="row"><h3>Noite no lago</h3><span class="mono">Noite</span></div>
+      <p>Luz acesa, reflexo na água e conversa até tarde. Ninguém tem pressa aqui.</p>
+    </article>
+  </div>
+</section>
+
+<!-- COMIDA -->
+<section class="claro-sec" id="comida">
+  <div class="wrap comida">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow mono">Cozinha <span class="demo-tag">cardápio de exemplo</span></div>
+        <h2>Pescou, <span class="serif">a gente frita.</span></h2>
+      </div>
+      <p>Comida de casa, feita no fogão a lenha. O peixe que você tirar do lago de manhã pode virar o almoço.</p>
+    </div>
+    <div class="c-grid">
+      <div class="c-foto" id="cFoto" aria-hidden="true">
+        <img class="on" src="assets/demo/peixe-frito.jpg" alt="">
+        <img src="assets/demo/caldeirada.jpg" alt="">
+        <img src="assets/demo/cafe.jpg" alt="">
+        <img src="assets/demo/churrasco.jpg" alt="">
+        <span class="hora" id="cHora">Todo dia · 12h</span>
+      </div>
+      <ol class="pratos" id="pratos">
+        <li class="prato on" data-i="0" data-h="Todo dia · 12h" tabindex="0">
+          <span class="num">01</span><h3>Peixe frito na hora</h3>
+          <p>Você pesca, a cozinha limpa e frita. Vem com arroz, feijão tropeiro, vinagrete e farofa.</p>
+          <span class="quando mono">Almoço · todo dia</span>
+          <img class="thumb" src="assets/demo/peixe-frito.jpg" alt="Peixe frito em prato branco" loading="lazy">
+        </li>
+        <li class="prato" data-i="1" data-h="Sábado · 20h" tabindex="0">
+          <span class="num">02</span><h3>Caldeirada de tucunaré</h3>
+          <p>Panela grande no centro da mesa, com pimenta-de-cheiro, leite de coco e pirão.</p>
+          <span class="quando mono">Jantar · sábado</span>
+          <img class="thumb" src="assets/demo/caldeirada.jpg" alt="Caldeirada de peixe na panela" loading="lazy">
+        </li>
+        <li class="prato" data-i="2" data-h="Todo dia · 6h às 9h" tabindex="0">
+          <span class="num">03</span><h3>Café da manhã da roça</h3>
+          <p>Cuscuz, pão de queijo, bolo do dia, ovos caipiras, frutas e café coado. Sai cedo pra quem vai pescar.</p>
+          <span class="quando mono">6h às 9h · todo dia</span>
+          <img class="thumb" src="assets/demo/cafe.jpg" alt="Mesa de café da manhã com vista" loading="lazy">
+        </li>
+        <li class="prato" data-i="3" data-h="Domingo · 11h" tabindex="0">
+          <span class="num">04</span><h3>Churrasco no flutuante</h3>
+          <p>Picanha, linguiça, frango e mandioca, servidos em cima d'água pra fechar o fim de semana.</p>
+          <span class="quando mono">Almoço · domingo</span>
+          <img class="thumb" src="assets/demo/churrasco.jpg" alt="Churrasco na grelha" loading="lazy">
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- PACOTES -->
+<section class="pacotes" id="pacotes">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow mono">Pacotes <span class="demo-tag">valores de demonstração</span></div>
+        <h2>Escolha o <span class="serif">seu ritmo</span></h2>
+      </div>
+      <p>Preço por pessoa, fim de semana completo: entrada sexta às 14h, saída domingo às 16h. Mínimo de 6 pessoas por reserva.</p>
+    </div>
+    <div class="p-grid">
+      <article class="pac">
+        <div class="rotulo"><span class="mono">01 · Básico</span></div>
+        <h3>Pé no lago</h3>
+        <div class="preco"><small>R$</small>500</div>
+        <div class="por">por pessoa · 2 diárias</div>
+        <ul>
+          <li>Hospedagem em quarto ou redário</li>
+          <li>Café da manhã da roça</li>
+          <li>Uso do flutuante e área de camping</li>
+          <li>Estacionamento pra carreta e barco</li>
+          <li class="off">Almoço e jantar</li>
+          <li class="off">Barco com piloteiro</li>
+        </ul>
+        <a class="pill claro mag" href="#reservar" data-pacote="Básico">Quero esse <span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12 12 4M5 4h7v7"/></svg></span></a>
+      </article>
+      <article class="pac destaque">
+        <div class="rotulo"><span class="mono">02 · Intermediário</span><span class="badge">Mais escolhido</span></div>
+        <h3>Linha esticada</h3>
+        <div class="preco"><small>R$</small>790</div>
+        <div class="por">por pessoa · 2 diárias</div>
+        <ul>
+          <li>Tudo do Básico</li>
+          <li>Almoço e jantar caseiros</li>
+          <li>Peixe frito na hora com o que você pescar</li>
+          <li>1 saída de barco com piloteiro (4h)</li>
+          <li>Gelo à vontade pra caixa térmica</li>
+          <li class="off">Guia de pesca e churrasco</li>
+        </ul>
+        <a class="pill escuro mag" href="#reservar" data-pacote="Intermediário">Quero esse <span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12 12 4M5 4h7v7"/></svg></span></a>
+      </article>
+      <article class="pac">
+        <div class="rotulo"><span class="mono">03 · Premium</span></div>
+        <h3>Troféu</h3>
+        <div class="preco"><small>R$</small>1.290</div>
+        <div class="por">por pessoa · 2 diárias</div>
+        <ul>
+          <li>Tudo do Intermediário</li>
+          <li>Pensão completa com bebidas não alcoólicas</li>
+          <li>Barco e piloteiro nos 2 dias</li>
+          <li>Guia de pesca esportiva</li>
+          <li>Churrasco no flutuante e caldeirada</li>
+          <li>Suíte Beira-Lago reservada e saída às 18h</li>
+        </ul>
+        <a class="pill sol mag" href="#reservar" data-pacote="Premium">Quero esse <span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12 12 4M5 4h7v7"/></svg></span></a>
+      </article>
+    </div>
+    <div class="p-nota">
+      <span>Só a hospedagem, sem pacote? <b>Pousada inteira a partir de R$ 1.500 a diária.</b></span>
+      <span>Crianças até 6 anos não pagam.</span>
+    </div>
+  </div>
+</section>
+
+<!-- RESERVA -->
+<section class="claro-sec" id="reservar">
+  <div class="wrap reserva-sec">
+    <div class="r-grid">
+      <div class="lado">
+        <div class="eyebrow mono">Reserva</div>
+        <h2 class="statement">Monta aí que a gente <span class="serif">confirma.</span></h2>
+        <p>Escolha a data, o pacote e quantas pessoas vão. A mensagem sai pronta pro WhatsApp da pousada, com o valor estimado.</p>
+      </div>
+      <form class="reserva" id="form" novalidate>
+        <h3>Sua reserva</h3>
+        <p>Preencha e a mensagem já vai pronta pro WhatsApp.</p>
+        <div class="campos">
+          <div class="campo"><label class="mono" for="entrada">Chegada</label><input type="date" id="entrada" required></div>
+          <div class="campo"><label class="mono" for="saida">Saída</label><input type="date" id="saida" required></div>
+          <div class="campo"><label class="mono" for="pacote">Pacote</label>
+            <select id="pacote">
+              <option value="Básico" data-v="500">Básico · R$ 500</option>
+              <option value="Intermediário" data-v="790" selected>Intermediário · R$ 790</option>
+              <option value="Premium" data-v="1290">Premium · R$ 1.290</option>
+              <option value="Pacote Férias" data-v="0">Pacote Férias (5 por 4)</option>
+              <option value="Torneio de Pesca" data-v="0">Torneio de Pesca</option>
+              <option value="Só hospedagem" data-v="0">Só hospedagem</option>
+            </select>
+          </div>
+          <div class="campo"><label class="mono" for="qtd">Pessoas</label><select id="qtd"></select></div>
+          <div class="campo full"><label class="mono" for="nome">Seu nome</label><input type="text" id="nome" autocomplete="given-name" placeholder="Como te chamamos?"></div>
+          <div class="campo full"><span class="mono lbl">Interesse</span>
+            <div class="chips">
+              <input type="checkbox" id="c1" value="pesca esportiva" checked><label for="c1">Pesca</label>
+              <input type="checkbox" id="c2" value="flutuante"><label for="c2">Flutuante</label>
+              <input type="checkbox" id="c3" value="camping"><label for="c3">Camping</label>
+              <input type="checkbox" id="c4" value="evento"><label for="c4">Evento</label>
+              <input type="checkbox" id="c5" value="descanso"><label for="c5">Só descansar</label>
+            </div>
+          </div>
+        </div>
+        <div class="estimativa"><span class="mono" style="color:var(--cinza)">Estimativa do grupo</span><strong id="est">R$ 7.900</strong></div>
+        <button type="submit" class="pill sol mag">Enviar pelo WhatsApp <span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12 12 4M5 4h7v7"/></svg></span></button>
+        <div class="msg" id="msg" aria-live="polite">Abre o WhatsApp com a mensagem escrita. Você revisa antes de mandar.</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- EVENTOS -->
+<section class="eventos" id="eventos">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow mono">Eventos <span class="demo-tag">agenda de exemplo</span></div>
+        <h2>Agenda do <span class="serif">lago</span></h2>
+      </div>
+      <p>Torneio de pesca esportiva, virada de ano no flutuante e o que mais a turma inventar. A pousada organiza e você só aparece.</p>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Eventos">
+      <button class="tab" role="tab" id="t1" aria-controls="p1" aria-selected="true">Próximos eventos</button>
+      <button class="tab" role="tab" id="t2" aria-controls="p2" aria-selected="false" tabindex="-1">Torneio de pesca</button>
+      <button class="tab" role="tab" id="t3" aria-controls="p3" aria-selected="false" tabindex="-1">Faça seu evento</button>
+    </div>
+
+    <div role="tabpanel" id="p1" aria-labelledby="t1">
+      <div class="ev-lista">
+        <article class="ev">
+          <div class="data">31<small>DEZ 2026</small></div>
+          <div><h3>Réveillon no Flutuante</h3><p>Ceia, música ao vivo e a virada em cima d'água vendo os fogos refletirem no lago.</p></div>
+          <div class="img"><img src="assets/noite.jpg" alt="Flutuante iluminado à noite" loading="lazy"></div>
+          <div class="vagas"><b>4 vagas</b><span class="mono">restantes</span></div>
+        </article>
+        <article class="ev">
+          <div class="data">14<small>MAR 2027</small></div>
+          <div><h3>1º Torneio Serve Mais de Pesca Esportiva</h3><p>Duplas, pesque e solte, categoria tucunaré. Pesagem no flutuante e premiação no domingo.</p></div>
+          <div class="img"><img src="assets/demo/pesca1.jpg" alt="Pescador segurando peixe no barco" loading="lazy"></div>
+          <div class="vagas"><b>40 barcos</b><span class="mono">inscrições abertas</span></div>
+        </article>
+        <article class="ev">
+          <div class="data">24<small>ABR 2027</small></div>
+          <div><h3>Pescaria Noturna + Moda de Viola</h3><p>Saída do barco às 18h, volta pra fogueira com viola e caldo. Só pra maiores de 18.</p></div>
+          <div class="img"><img src="assets/demo/fogueira.jpg" alt="Amigos em volta da fogueira à noite" loading="lazy"></div>
+          <div class="vagas"><b>20 vagas</b><span class="mono">por pessoa</span></div>
+        </article>
+        <article class="ev">
+          <div class="data">10<small>JUL 2027</small></div>
+          <div><h3>Abertura da Temporada de Julho</h3><p>Fim de semana de praia no lago, com som, comida e passeio de barco pra família toda.</p></div>
+          <div class="img"><img src="assets/demo/barco.jpg" alt="Barco no lago ao pôr do sol" loading="lazy"></div>
+          <div class="vagas"><b>Em breve</b><span class="mono">lista de espera</span></div>
+        </article>
+      </div>
+    </div>
+
+    <div role="tabpanel" id="p2" aria-labelledby="t2" hidden>
+      <div class="torneio">
+        <div class="foto"><img src="assets/demo/pesca1.jpg" alt="Pescador segurando um peixe no barco" loading="lazy"><div class="sticker">R$ 10 mil<br>em prêmios</div></div>
+        <div>
+          <div class="mono" style="color:var(--sol);margin-bottom:12px">13 e 14 de março de 2027</div>
+          <h3>1º Torneio Serve Mais de Pesca Esportiva</h3>
+          <p>Torneio em duplas, modalidade pesque e solte. Cada peixe é medido na régua oficial, fotografado e devolvido ao lago. Vence a dupla com a maior soma de centímetros.</p>
+          <dl class="regras">
+            <div><dt>Modalidade</dt><dd>Pesque e solte · duplas</dd></div>
+            <div><dt>Espécie</dt><dd>Tucunaré</dd></div>
+            <div><dt>Inscrição</dt><dd>R$ 350 por dupla</dd></div>
+            <div><dt>Limite</dt><dd>40 barcos</dd></div>
+          </dl>
+          <table class="premios">
+            <thead><tr><th>Colocação</th><th>Prêmio</th></tr></thead>
+            <tbody>
+              <tr><td><b>1º lugar</b></td><td>R$ 5.000 + troféu</td></tr>
+              <tr><td><b>2º lugar</b></td><td>R$ 2.500</td></tr>
+              <tr><td><b>3º lugar</b></td><td>R$ 1.500</td></tr>
+              <tr><td><b>Maior peixe</b></td><td>R$ 1.000 + carretilha</td></tr>
+            </tbody>
+          </table>
+          <a class="pill sol mag" href="#reservar" data-pacote="Torneio de Pesca">Inscrever minha dupla <span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12 12 4M5 4h7v7"/></svg></span></a>
+        </div>
+      </div>
+    </div>
+
+    <div role="tabpanel" id="p3" aria-labelledby="t3" hidden>
+      <div class="seu-evento">
+        <div>
+          <h3>A pousada é sua por um fim de semana.</h3>
+          <p>Aniversário, confraternização da empresa, encontro de pescadores ou casamento pequeno na beira do lago. A gente cuida da comida, da estrutura e dos barcos.</p>
+          <div class="tipos" style="margin:28px 0">
+            <div class="tipo"><b>Confraternização</b><span>Até 20 hospedados e 60 no dia</span></div>
+            <div class="tipo"><b>Aniversário</b><span>Churrasco no flutuante e bolo</span></div>
+            <div class="tipo"><b>Encontro de pesca</b><span>Barcos, piloteiros e pesagem</span></div>
+            <div class="tipo"><b>Casamento pequeno</b><span>Cerimônia no pôr do sol</span></div>
+          </div>
+          <a class="pill claro mag" href="https://wa.me/5563984604934?text=Ol%C3%A1!%20Quero%20fazer%20um%20evento%20na%20Pousada%20Serve%20Mais." target="_blank" rel="noopener">Falar sobre meu evento <span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12 12 4M5 4h7v7"/></svg></span></a>
+        </div>
+        <div class="foto"><img src="assets/demo/fogueira.jpg" alt="Grupo de amigos em volta da fogueira" loading="lazy"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMO CHEGAR -->
+<section id="chegar" style="background:var(--lago-2)">
+  <div class="wrap chegar">
+    <div class="eyebrow mono">Como chegar</div>
+    <h2 class="statement rv" style="color:var(--musgo)">Perto o bastante pra ir na sexta. <span class="serif" style="color:var(--sol)">Longe o bastante pra esquecer o celular.</span></h2>
+    <div class="rota">
+      <div class="km" id="km">40 km</div>
+      <svg viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M10 90 C 180 20, 300 110, 470 60 S 760 10, 990 70" fill="none" stroke="rgba(233,238,231,.25)" stroke-width="2" stroke-dasharray="6 8"/>
+        <path id="rotaFill" d="M10 90 C 180 20, 300 110, 470 60 S 760 10, 990 70" fill="none" stroke="#E7A040" stroke-width="3"/>
+        <circle cx="10" cy="90" r="9" fill="#E9EEE7"/>
+        <circle cx="990" cy="70" r="9" fill="#E7A040"/>
+      </svg>
+      <div class="pts">
+        <div><span class="mono">Saída</span><b>Palmeirópolis</b></div>
+        <div style="text-align:right"><span class="mono">Chegada</span><b>Serve Mais</b></div>
+      </div>
+    </div>
+    <div class="chegar-foot">
+      <p>A pousada fica na margem do lago da UHE São Salvador do Tocantins. Abra a localização no Google Maps e trace a rota do seu celular.</p>
+      <a class="pill claro mag" href="https://g.co/kgs/ckJhWn" target="_blank" rel="noopener">Abrir no Google Maps <span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12 12 4M5 4h7v7"/></svg></span></a>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <h2>Bora pro <span class="serif">lago?</span></h2>
+    <div class="final-row">
+      <p>As vagas dos feriados acabam rápido. Chama no WhatsApp, fala a data e a gente separa a pousada pra sua turma.</p>
+      <div class="contato">
+        <span class="mono">Reservas</span>
+        <span class="fone" id="fone">(63) 9 8460-4934</span>
+        <div class="acoes">
+          <a class="pill escuro mag" href="https://wa.me/5563984604934?text=Ol%C3%A1!%20Quero%20reservar%20a%20Pousada%20Serve%20Mais." target="_blank" rel="noopener">Chamar no WhatsApp <span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12 12 4M5 4h7v7"/></svg></span></a>
+          <button class="copy" type="button" id="copiar">Copiar número</button>
+        </div>
+      </div>
+    </div>
+    <footer class="base mono">
+      <span>© 2026 Pousada Serve Mais · Palmeirópolis-TO</span>
+      <span>Versão de demonstração · pacotes, eventos e algumas fotos são ilustrativos</span>
+      <a href="https://www.instagram.com/pousadaservemais/" target="_blank" rel="noopener">Instagram @pousadaservemais ↗</a>
+    </footer>
+  </div>
+</section>
+
+<a class="zap" href="https://wa.me/5563984604934" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>
+</a>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/FontLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/geometries/TextGeometry.js"></script>
+<script>
+(function(){
+const WA="5563984604934";
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const isMobile=matchMedia("(max-width:700px)").matches;
+const hero=document.querySelector(".hero");
+let mouse=[.5,.5],tgt=[.5,.5],heroVisible=true,heroP=0;
+addEventListener("pointermove",e=>{tgt=[e.clientX/innerWidth,1-e.clientY/innerHeight];});
+new IntersectionObserver(e=>{heroVisible=e[0].isIntersecting;}).observe(hero);
+addEventListener("scroll",()=>{heroP=Math.min(1,Math.max(0,scrollY/hero.offsetHeight));},{passive:true});
+
+/* ---------- Lago (shader) ---------- */
+const cv=document.getElementById("lago");
+const gl=cv.getContext("webgl",{antialias:false});
+let drawLake=null;
+if(!gl){document.getElementById("fallback").style.opacity=1;}
+else{
+  const vs=`attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}`;
+  const fs=`precision highp float;
+  uniform vec2 r;uniform float t;uniform vec2 m;
+  float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+  float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+    return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
+  float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*n(p);p*=2.03;a*=.5;}return v;}
+  vec3 sky(float y,vec2 uv,vec2 sun){
+    vec3 top=vec3(.05,.15,.14),mid=vec3(.55,.33,.2),hor=vec3(.98,.62,.28);
+    vec3 c=mix(hor,mid,smoothstep(0.,.25,y));c=mix(c,top,smoothstep(.2,.75,y));
+    float d=length((uv-sun)*vec2(1.,1.3));
+    c+=vec3(1.,.72,.38)*exp(-d*7.)*.9+vec3(1.,.9,.7)*smoothstep(.045,.03,d);
+    float cl=fbm(vec2(uv.x*2.5+t*.01,y*7.));c=mix(c,c*1.15+vec3(.08,.04,.02),smoothstep(.55,.8,cl)*smoothstep(.05,.3,y)*.5);
+    return c;}
+  void main(){
+    vec2 uv=gl_FragCoord.xy/r;float asp=r.x/r.y;vec2 q=vec2(uv.x*asp,uv.y);
+    float H=.5+(m.y-.5)*.03;
+    vec2 sun=vec2((.62+(m.x-.5)*.08)*asp,H+.11);
+    vec3 col;
+    if(uv.y>H){
+      float y=uv.y-H;col=sky(y,q,sun);
+      float tree=H+.012+.03*fbm(vec2(q.x*9.,1.))+.012*n(vec2(q.x*60.,2.));
+      float far=H+.006+.012*fbm(vec2(q.x*4.+3.,5.));
+      col=mix(col,vec3(.18,.16,.15),step(uv.y,far)*.6);
+      col=mix(col,vec3(.03,.07,.06),step(uv.y,tree)*.85);
+    }else{
+      float d=H-uv.y;float persp=1./(d+.03);
+      vec2 wp=vec2(q.x*persp*.6,persp*1.2);
+      float w=fbm(wp*1.4+vec2(t*.05,t*.12))-.5;
+      float w2=fbm(wp*3.+vec2(-t*.08,t*.2))-.5;
+      vec2 off=vec2(w+w2*.5,0.)*.06*(d+.05);
+      float ry=H+d*.9;vec2 rq=vec2(q.x+off.x*asp*3.,ry);
+      vec3 refl=sky(ry-H,rq,sun);
+      vec3 deep=vec3(.03,.11,.10);
+      col=mix(refl*.85,deep,smoothstep(.0,.5,d)*.85);
+      float glint=pow(max(0.,1.-abs(q.x-sun.x+off.x*8.)*(3.+d*14.)),3.)*smoothstep(.75,.0,d);
+      float sparkle=smoothstep(.62,.72,fbm(wp*6.+t*.3))*glint;
+      col+=vec3(1.,.7,.35)*(glint*.35+sparkle*1.4);
+      col=mix(col,vec3(.03,.08,.07),step(d,.006)*.6);
+    }
+    col*=1.-.35*pow(length(uv-.5)*1.2,2.);
+    col=mix(col,vec3(.043,.14,.125),smoothstep(.3,0.,uv.y)*.6);
+    gl_FragColor=vec4(pow(col,vec3(.95)),1.);
+  }`;
+  const sh=(type,src)=>{const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);return s;};
+  const pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,vs));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(pr);gl.useProgram(pr);
+  const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+  const loc=gl.getAttribLocation(pr,"p");gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+  const uR=gl.getUniformLocation(pr,"r"),uT=gl.getUniformLocation(pr,"t"),uM=gl.getUniformLocation(pr,"m");
+  const resize=()=>{const dpr=Math.min(devicePixelRatio||1,isMobile?1.25:1.5);cv.width=Math.round(cv.clientWidth*dpr);cv.height=Math.round(cv.clientHeight*dpr);gl.viewport(0,0,cv.width,cv.height);};
+  resize();addEventListener("resize",resize);
+  drawLake=(sec)=>{gl.useProgram(pr);gl.uniform2f(uR,cv.width,cv.height);gl.uniform1f(uT,sec);gl.uniform2f(uM,mouse[0],mouse[1]);gl.drawArrays(gl.TRIANGLES,0,3);};
+}
+
+/* ---------- Logo e nome em 3D ---------- */
+let draw3D=null,intro3D=null;
+function init3D(done){
+  if(!window.THREE||!THREE.FontLoader||!gl){done();return;}
+  const c3=document.getElementById("tres");
+  let renderer;
+  try{renderer=new THREE.WebGLRenderer({canvas:c3,alpha:true,antialias:true});}catch(e){done();return;}
+  renderer.setPixelRatio(Math.min(devicePixelRatio||1,isMobile?1.5:2));
+  renderer.outputEncoding=THREE.sRGBEncoding;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
+  const scene=new THREE.Scene();
+  const cam=new THREE.PerspectiveCamera(28,1,.1,200);
+  scene.add(new THREE.HemisphereLight(0xffe4c0,0x0b2420,1.1));
+  const sun=new THREE.DirectionalLight(0xffa850,2.6);sun.position.set(4,2.5,-5);scene.add(sun);
+  const key=new THREE.DirectionalLight(0xffffff,1.3);key.position.set(-4,4,8);scene.add(key);
+  const fill=new THREE.PointLight(0xe7a040,1.2,40);fill.position.set(0,-3,4);scene.add(fill);
+
+  const root=new THREE.Group();scene.add(root);
+  const textG=new THREE.Group();root.add(textG);
+  const coinG=new THREE.Group();root.add(coinG);
+
+  // moeda com a logo
+  const logoTex=new THREE.TextureLoader().load("assets/logo.jpg");
+  logoTex.encoding=THREE.sRGBEncoding;logoTex.anisotropy=4;logoTex.center.set(.5,.5);logoTex.rotation=Math.PI/2;
+  const coinGeo=new THREE.CylinderGeometry(1,1,.16,72,1);
+  const wood=new THREE.MeshStandardMaterial({color:0x6b4127,roughness:.55,metalness:.25});
+  const face=new THREE.MeshStandardMaterial({map:logoTex,roughness:.45,metalness:.05});
+  const coin=new THREE.Mesh(coinGeo,[wood,face,face]);
+  coin.rotation.x=Math.PI/2;coinG.add(coin);
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(1.02,.055,16,96),new THREE.MeshStandardMaterial({color:0xe7a040,roughness:.3,metalness:.7}));
+  coinG.add(ring);
+
+  // gorro de Papai Noel
+  const hat=new THREE.Group();
+  const vermelho=new THREE.MeshStandardMaterial({color:new THREE.Color(0xb3121f).convertSRGBToLinear(),roughness:.8,metalness:0});
+  const branco=new THREE.MeshStandardMaterial({color:0xf6f3ee,roughness:1,metalness:0});
+  const coneGeo=new THREE.ConeGeometry(.66,1.35,48,16,true);
+  const pos=coneGeo.attributes.position;
+  for(let i=0;i<pos.count;i++){
+    const y=pos.getY(i),t=(y+.675)/1.35;
+    pos.setX(i,pos.getX(i)+t*t*.75);
+    pos.setY(i,y-t*t*t*.35);
+  }
+  coneGeo.computeVertexNormals();
+  const cone=new THREE.Mesh(coneGeo,vermelho);hat.add(cone);
+  const aba=new THREE.Mesh(new THREE.TorusGeometry(.66,.17,20,64),branco);
+  aba.rotation.x=Math.PI/2;aba.position.y=-.675;aba.scale.z=.8;hat.add(aba);
+  const pompom=new THREE.Mesh(new THREE.SphereGeometry(.2,24,16),branco);
+  pompom.position.set(.75,.675-.35,0);hat.add(pompom);
+  hat.position.set(-.38,1.12,.12);hat.rotation.set(-.15,0,.42);hat.scale.setScalar(.82);
+  coinG.add(hat);
+
+  let stacked=false,ready=false,font=null,comp=null,refl=null;
+  const lin=h=>new THREE.Color(h).convertSRGBToLinear();
+  const M={
+    face:new THREE.MeshStandardMaterial({color:lin(0xf7f4ee),roughness:.38,metalness:.05}),
+    side:new THREE.MeshStandardMaterial({color:lin(0x3a2214),roughness:.7,metalness:.1}),
+    wood:new THREE.MeshStandardMaterial({color:lin(0x4a2a17),roughness:.62,metalness:.08}),
+    cream:new THREE.MeshStandardMaterial({color:lin(0xe8d6b4),roughness:.55,metalness:.05})
+  };
+  const glow=new THREE.MeshStandardMaterial({color:0xe7a040,roughness:.4,metalness:.3,transparent:true,opacity:.16});
+  const txt=(s,size,depth)=>{
+    const g=new THREE.TextGeometry(s,{font,size,height:depth,curveSegments:10,bevelEnabled:true,bevelThickness:depth*.14,bevelSize:size*.022,bevelSegments:3});
+    g.computeBoundingBox();const b=g.boundingBox;g.translate(-b.min.x,0,0);g.computeBoundingBox();return g;
+  };
+  const rrect=(w,h,r)=>{const s=new THREE.Shape();s.moveTo(-w/2+r,-h/2);s.lineTo(w/2-r,-h/2);s.quadraticCurveTo(w/2,-h/2,w/2,-h/2+r);s.lineTo(w/2,h/2-r);s.quadraticCurveTo(w/2,h/2,w/2-r,h/2);s.lineTo(-w/2+r,h/2);s.quadraticCurveTo(-w/2,h/2,-w/2,h/2-r);s.lineTo(-w/2,-h/2+r);s.quadraticCurveTo(-w/2,-h/2,-w/2+r,-h/2);return s;};
+  const slab=(w,h,r,d,mat)=>{const g=new THREE.ExtrudeGeometry(rrect(w,h,r),{depth:d,bevelEnabled:true,bevelThickness:.02,bevelSize:.02,bevelSegments:2,curveSegments:8});return new THREE.Mesh(g,mat);};
+  function buildComp(ghost){
+    const g=new THREE.Group(),inner=new THREE.Group();g.add(inner);
+    const m=k=>ghost?glow:M[k];
+    const gS=txt("Serve",1,.3),wS=gS.boundingBox.max.x;
+    inner.add(new THREE.Mesh(gS,[m("face"),m("side")]));
+    const gP=txt("Pousada",.3,.12),wP=gP.boundingBox.max.x;
+    const pou=new THREE.Mesh(gP,[m("face"),m("side")]);inner.add(pou);
+    const gM=txt("Mais",.4,.1),wM=gM.boundingBox.max.x;
+    const bw=wM+.62,bh=.6;
+    const ban=new THREE.Group();inner.add(ban);
+    const borda=slab(bw+.13,bh+.13,.16,.1,m("cream"));borda.position.z=-.06;ban.add(borda);
+    const tabua=slab(bw,bh,.12,.16,m("wood"));ban.add(tabua);
+    const mais=new THREE.Mesh(gM,[m("face"),m("side")]);mais.position.set(-wM/2,-.145,.17);ban.add(mais);
+    if(stacked){
+      pou.position.set(wS*.5-wP*.42,.9,.05);
+      ban.position.set(wS*.47,-.52,.02);
+    }else{
+      pou.position.set(.12,.9,.05);
+      ban.position.set(wS+.34+bw/2,.36,.02);
+    }
+    const box=new THREE.Box3().setFromObject(inner);
+    inner.position.set(-(box.min.x+box.max.x)/2,-box.min.y,0);
+    g.userData.h=box.max.y-box.min.y;g.userData.w=box.max.x-box.min.x;
+    return g;
+  }
+  function buildText(){
+    while(textG.children.length)textG.remove(textG.children[0]);
+    comp=buildComp(false);textG.add(comp);
+    refl=buildComp(true);refl.scale.y=-1;refl.position.y=-.06;textG.add(refl);
+  }
+  const fit=()=>{
+    const w=c3.clientWidth,h=c3.clientHeight;if(!w||!h)return;
+    renderer.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();
+    if(!ready)return;
+    const nSt=cam.aspect<1.05;
+    if(nSt!==stacked){stacked=nSt;buildText();}
+    const tw=comp.userData.w,th=comp.userData.h;
+    const tan=Math.tan(THREE.MathUtils.degToRad(cam.fov/2));
+    const dW=tw/(2*tan*cam.aspect*(stacked?.8:.84));
+    const dH=th/(2*tan*(stacked?.34:.44));
+    const dist=Math.max(dW,dH);
+    cam.position.set(0,0,dist);cam.lookAt(0,0,0);
+    const visH=2*tan*dist,visW=visH*cam.aspect;
+    textG.position.y=-visH/2+visH*(stacked?.12:.1);
+    textG.userData.y=textG.position.y;
+    const r=Math.min(visW,visH)*(stacked?.11:.09);
+    coinG.scale.setScalar(r);
+    coinG.position.set(stacked?visW*.3:visW*.34,stacked?textG.position.y+th+r*1.2:visH*.1,.4);
+    coinG.userData.y=coinG.position.y;
+  };
+  new THREE.FontLoader().load("assets/montserrat_extrabold.typeface.json",f=>{
+    font=f;stacked=(c3.clientWidth/c3.clientHeight)<1.05;buildText();ready=true;fit();
+    hero.classList.add("has3d");
+    done();
+  },undefined,()=>done());
+  addEventListener("resize",fit);fit();
+
+  intro3D=()=>{
+    if(!window.gsap||reduce)return;
+    gsap.from(textG.position,{y:textG.userData.y-3,duration:1.8,ease:"expo.out",delay:.2});
+    gsap.from(textG.rotation,{x:-1.2,duration:2,ease:"expo.out",delay:.2});
+    gsap.from(coinG.scale,{x:.001,y:.001,z:.001,duration:1.4,ease:"back.out(1.6)",delay:.7});
+    gsap.from(coin.rotation,{z:Math.PI*4,duration:2.4,ease:"expo.out",delay:.7});
+  };
+  let spin=0;
+  draw3D=(sec)=>{
+    if(!ready)return;
+    const mx=mouse[0]-.5,my=mouse[1]-.5;
+    textG.rotation.y=mx*.35;
+    textG.rotation.x=-my*.2+heroP*.7;
+    if(textG.userData.y!==undefined&&!gsap.isTweening(textG.position))textG.position.y=textG.userData.y+Math.sin(sec*.9)*.04+heroP*1.2;
+    spin+=.006+heroP*.05;
+    coin.rotation.z=reduce?0:spin*0+Math.sin(sec*.6)*.35+mx*.6;
+    coinG.rotation.y=reduce?0:(Math.sin(sec*.45)*.5+mx*.5);
+    coinG.rotation.x=-my*.4;
+    if(coinG.userData.y!==undefined)coinG.position.y=coinG.userData.y+Math.sin(sec*1.2)*.08;
+    renderer.render(scene,cam);
+  };
+}
+
+/* ---------- Loop ---------- */
+const t0=performance.now();
+function frame(now){
+  if(heroVisible){
+    mouse[0]+=(tgt[0]-mouse[0])*.05;mouse[1]+=(tgt[1]-mouse[1])*.05;
+    const sec=reduce?4:(now-t0)/1000;
+    if(drawLake)drawLake(sec);
+    if(draw3D)draw3D(sec);
+  }
+  requestAnimationFrame(frame);
+}
+
+/* ---------- Contagem férias ---------- */
+const alvo=new Date("2026-12-19T00:00:00-03:00").getTime();
+const pad=n=>String(n).padStart(2,"0");
+const tick=()=>{let s=Math.max(0,Math.floor((alvo-Date.now())/1000));
+  document.getElementById("cd-d").textContent=pad(Math.floor(s/86400));s%=86400;
+  document.getElementById("cd-h").textContent=pad(Math.floor(s/3600));s%=3600;
+  document.getElementById("cd-m").textContent=pad(Math.floor(s/60));
+  document.getElementById("cd-s").textContent=pad(s%60);};
+tick();setInterval(tick,1000);
+
+/* ---------- Comida ---------- */
+const pratos=[...document.querySelectorAll(".prato")],fotos=[...document.querySelectorAll("#cFoto img")],hora=document.getElementById("cHora");
+const setPrato=el=>{pratos.forEach(p=>p.classList.toggle("on",p===el));fotos.forEach((f,i)=>f.classList.toggle("on",i==el.dataset.i));hora.textContent=el.dataset.h;};
+pratos.forEach(p=>{p.addEventListener("pointerenter",()=>setPrato(p));p.addEventListener("focus",()=>setPrato(p));});
+
+/* ---------- Abas de eventos ---------- */
+const tabs=[...document.querySelectorAll('[role="tab"]')];
+const selTab=t=>{tabs.forEach(x=>{const on=x===t;x.setAttribute("aria-selected",on);x.tabIndex=on?0:-1;document.getElementById(x.getAttribute("aria-controls")).hidden=!on;});if(window.ScrollTrigger)ScrollTrigger.refresh();};
+tabs.forEach((t,i)=>{t.addEventListener("click",()=>selTab(t));t.addEventListener("keydown",e=>{if(e.key==="ArrowRight"||e.key==="ArrowLeft"){const n=tabs[(i+(e.key==="ArrowRight"?1:tabs.length-1))%tabs.length];selTab(n);n.focus();}});});
+
+/* ---------- Reserva ---------- */
+const qtd=document.getElementById("qtd"),pac=document.getElementById("pacote"),est=document.getElementById("est");
+for(let i=1;i<=20;i++){const o=document.createElement("option");o.value=i;o.textContent=i+(i==1?" pessoa":" pessoas");qtd.appendChild(o);}
+qtd.value=10;
+const brl=v=>"R$ "+Math.round(v).toLocaleString("pt-BR");
+const calc=()=>{const v=+pac.selectedOptions[0].dataset.v;est.textContent=v?brl(v*qtd.value):"Sob consulta";};
+pac.addEventListener("change",calc);qtd.addEventListener("change",calc);calc();
+document.querySelectorAll("[data-pacote]").forEach(a=>a.addEventListener("click",()=>{pac.value=a.dataset.pacote;calc();}));
+const iso=d=>d.toISOString().slice(0,10);
+const hoje=new Date();const sexta=new Date(hoje);sexta.setDate(hoje.getDate()+((5-hoje.getDay()+7)%7||7));
+const dom=new Date(sexta);dom.setDate(sexta.getDate()+2);
+const ent=document.getElementById("entrada"),sai=document.getElementById("saida");
+ent.value=iso(sexta);sai.value=iso(dom);ent.min=iso(hoje);sai.min=iso(hoje);
+const fmt=s=>s.split("-").reverse().join("/");
+document.getElementById("form").addEventListener("submit",e=>{
+  e.preventDefault();
+  const msg=document.getElementById("msg");
+  if(!ent.value||!sai.value){msg.textContent="Escolha a data de chegada e de saída.";return;}
+  if(sai.value<=ent.value){msg.textContent="A saída precisa ser depois da chegada.";return;}
+  const nome=document.getElementById("nome").value.trim();
+  const ints=[...document.querySelectorAll(".chips input:checked")].map(i=>i.value);
+  const noites=Math.round((new Date(sai.value)-new Date(ent.value))/864e5);
+  const t=`Olá! ${nome?`Aqui é ${nome}. `:""}Vi o site e quero reservar a Pousada Serve Mais.\n\n`+
+    `• Pacote: ${pac.value}\n• Chegada: ${fmt(ent.value)}\n• Saída: ${fmt(sai.value)} (${noites} ${noites==1?"diária":"diárias"})\n• Pessoas: ${qtd.value}`+
+    (ints.length?`\n• Interesse: ${ints.join(", ")}`:"")+`\n• Estimativa do site: ${est.textContent}\n\nTem vaga nessas datas?`;
+  const a=document.createElement("a");a.href=`https://wa.me/${WA}?text=${encodeURIComponent(t)}`;a.target="_blank";a.rel="noopener";
+  document.body.appendChild(a);a.click();a.remove();
+  msg.textContent="Mensagem pronta. Se o WhatsApp não abriu, chame no (63) 9 8460-4934.";
+});
+
+document.getElementById("copiar").addEventListener("click",e=>{
+  const b=e.currentTarget;
+  navigator.clipboard.writeText("63984604934").then(()=>{b.textContent="Número copiado";},()=>{
+    const r=document.createRange();r.selectNodeContents(document.getElementById("fone"));const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="Selecionado, é só copiar";});
+});
+
+const nav=document.getElementById("nav");
+const onScroll=()=>nav.classList.toggle("solid",scrollY>40);addEventListener("scroll",onScroll,{passive:true});onScroll();
+
+const cur=document.getElementById("cur");
+if(matchMedia("(hover:hover)").matches&&!reduce){
+  addEventListener("pointermove",e=>{cur.style.left=e.clientX+"px";cur.style.top=e.clientY+"px";});
+  document.querySelectorAll("a,button,label,input,select,.prato").forEach(el=>{el.addEventListener("pointerenter",()=>cur.classList.add("big"));el.addEventListener("pointerleave",()=>cur.classList.remove("big"));});
+  document.querySelectorAll(".mag").forEach(el=>{
+    el.addEventListener("pointermove",e=>{const r=el.getBoundingClientRect();el.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.18}px,${(e.clientY-r.top-r.height/2)*.3}px)`;});
+    el.addEventListener("pointerleave",()=>{el.style.transform="";});
+  });
+}else cur.style.display="none";
+
+/* ---------- Loader + intro ---------- */
+const loader=document.getElementById("loader"),ldn=document.getElementById("ldn");
+let loaded3D=false,counted=false,started=false;
+const start=()=>{
+  if(started||!loaded3D||!counted)return;started=true;
+  loader.classList.add("out");
+  if(intro3D)intro3D();
+  if(window.gsap&&!reduce){
+    gsap.from(".hero .line-mask>span",{yPercent:110,duration:1.1,ease:"expo.out",stagger:.12,delay:.35});
+    gsap.from(".hero .meta, .hero .lead .pill",{opacity:0,y:16,duration:.9,ease:"power3.out",delay:.8,stagger:.1});
+  }
+};
+init3D(()=>{loaded3D=true;start();});
+requestAnimationFrame(frame);
+if(window.gsap&&!reduce){const o={v:0};gsap.to(o,{v:100,duration:1.2,ease:"power2.inOut",onUpdate:()=>ldn.textContent=Math.round(o.v),onComplete:()=>{counted=true;start();}});}
+else{counted=true;start();}
+setTimeout(()=>{loaded3D=true;counted=true;start();loader.classList.add("out");},5000);
+
+/* ---------- Scroll ---------- */
+if(window.gsap&&window.ScrollTrigger&&!reduce){
+  gsap.registerPlugin(ScrollTrigger);
+  if(window.Lenis){const lenis=new Lenis({lerp:.1});lenis.on("scroll",ScrollTrigger.update);gsap.ticker.add(t=>lenis.raf(t*1000));gsap.ticker.lagSmoothing(0);
+    document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener("click",e=>{const id=a.getAttribute("href");if(id.length>1&&document.querySelector(id)){e.preventDefault();lenis.scrollTo(id,{offset:-70});}}));}
+  gsap.utils.toArray(".rv").forEach(el=>gsap.from(el,{y:50,opacity:0,duration:1.1,ease:"expo.out",scrollTrigger:{trigger:el,start:"top 88%"}}));
+  gsap.utils.toArray(".px").forEach(img=>gsap.fromTo(img,{yPercent:-8},{yPercent:8,ease:"none",scrollTrigger:{trigger:img.parentElement,start:"top bottom",end:"bottom top",scrub:true}}));
+  gsap.fromTo(".ferias .bg",{yPercent:-10,scale:1.15},{yPercent:10,ease:"none",scrollTrigger:{trigger:".ferias",start:"top bottom",end:"bottom top",scrub:true}});
+  gsap.from(".ferias h2",{yPercent:30,opacity:0,duration:1.2,ease:"expo.out",scrollTrigger:{trigger:".ferias",start:"top 75%"}});
+  gsap.from(".contagem div",{y:30,opacity:0,duration:.9,ease:"expo.out",stagger:.08,scrollTrigger:{trigger:".contagem",start:"top 85%"}});
+  gsap.from(".quarto",{y:60,opacity:0,duration:1.1,ease:"expo.out",stagger:.12,scrollTrigger:{trigger:".q-grid",start:"top 85%"}});
+  gsap.from(".pac",{y:70,opacity:0,duration:1.1,ease:"expo.out",stagger:.12,scrollTrigger:{trigger:".p-grid",start:"top 85%"}});
+  gsap.from(".ev",{y:40,opacity:0,duration:1,ease:"expo.out",stagger:.1,scrollTrigger:{trigger:".ev-lista",start:"top 85%"}});
+  gsap.to(".exp-bg",{xPercent:-25,ease:"none",scrollTrigger:{trigger:".exp",start:"top bottom",end:"bottom top",scrub:true}});
+  ScrollTrigger.matchMedia({
+    "(min-width:961px)":()=>{
+      const rail=document.getElementById("rail");
+      const dist=()=>rail.scrollWidth-innerWidth;
+      gsap.to(rail,{x:()=>-dist(),ease:"none",scrollTrigger:{trigger:".exp",start:"top top",end:()=>"+="+dist(),pin:true,scrub:1,invalidateOnRefresh:true}});
+    },
+    "(max-width:960px)":()=>{
+      gsap.utils.toArray(".card").forEach(c=>gsap.from(c,{y:60,opacity:0,duration:1,ease:"expo.out",scrollTrigger:{trigger:c,start:"top 90%"}}));
+    }
+  });
+  const rf=document.getElementById("rotaFill");const L=rf.getTotalLength();
+  gsap.fromTo(rf,{strokeDasharray:L,strokeDashoffset:L},{strokeDashoffset:0,ease:"none",scrollTrigger:{trigger:".rota",start:"top 80%",end:"bottom 50%",scrub:true}});
+  const km={v:0};gsap.to(km,{v:40,ease:"none",scrollTrigger:{trigger:".rota",start:"top 80%",end:"bottom 50%",scrub:true},onUpdate:()=>document.getElementById("km").textContent=Math.round(km.v)+" km"});
+  gsap.from(".final h2",{yPercent:30,opacity:0,duration:1.2,ease:"expo.out",scrollTrigger:{trigger:".final",start:"top 75%"}});
+}
+})();
+</script>
+</body>
+</html>
